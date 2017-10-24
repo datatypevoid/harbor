@@ -36,9 +36,9 @@ cleanup_container () {
 
   if [ "$_is_container_running" = true ]; then
     # Stop container and clean-up along with volumes.
-    docker stop ${_container_name} && docker rm -v ${_container_name}
+    harbor stop ${_container_name} && harbor rm -v ${_container_name}
   elif [ "$_is_container_exited" = true ]; then
-    docker rm -v ${_container_name}
+    harbor rm -v ${_container_name}
   else
     printf "WARN: No container (running or stopped) with the name: ${_container_name}\n"
   fi
