@@ -324,7 +324,7 @@ start_container () {
     debug 1 "INFO: %s\n" "Attempting to run container ${_container_name}..."
     debug 1 "INFO: %s\n" "Using Docker image: ${_docker_image}"
     debug 2 "Container ID: %s\n" "$(
-      docker run -it \
+      harbor run -i -t \
         -v ${_mount_source}:${_mount_target} \
         --name ${_container_name} \
         -d ${_docker_image}

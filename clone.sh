@@ -351,7 +351,7 @@ start_container () {
     debug 1 "INFO: %s\n" "Attempting to run container ${_container_name}..."
     debug 1 "INFO: %s\n" "Using Docker image: ${_docker_image}"
     debug 2 "Container ID: %s\n" "$(
-      docker run -it \
+      harbor run -i -t \
         --name ${_container_name} \
         --mount source=${_ssh_source},target=${_ssh_target},readonly \
         --mount source=${_app_source},target=${_app_target} \

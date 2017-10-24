@@ -305,7 +305,7 @@ start_container () {
     debug 1 "INFO: %s\n" "Using Docker image: ${_docker_image}"
     # Run container
     debug 2 "Container ID: %s\n" "$(
-      docker run -it \
+      harbor run -i -t \
         --name ${_container_name} \
         --mount source=${_mount_source},target=${_mount_target} \
         -d ${_docker_image}
