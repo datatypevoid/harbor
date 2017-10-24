@@ -330,7 +330,7 @@ start_container () {
 
 open_console () {
   local _container_name=${1:?}
-  debug 2 "INFO: %s\n" "Attempting to launch console to container ${_container_name})"
+  debug 2 "INFO: %s\n" "Attempting to launch console to container ${_container_name}"
   docker exec -it ${_container_name} bash
 }
 
