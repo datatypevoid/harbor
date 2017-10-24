@@ -1,0 +1,1 @@
+usage: harbor namegen [--iterations|-i <# of values to generate>][--leet|--1337|-l][--help|-h|-?]

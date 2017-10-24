@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# 1337.shlib
+
+text_to_leet () {
+  local _input=$2
+  if [ "$1" == "-e" ]; then # if the cli argument is -e
+    _opt="encrypt"; # set the _option to encrypt
+  elif [ "$1" == "-d" ]; then # if the cli argument is -d
+    _opt="decrypt"; # set the _option to decrypt
+  else # else show the proper usage
+    printf -- "Usage: %s\n" "Encrypt text: text_to_leet -e text"
+    printf -- "       %s\n" "Decrypt text: text_to_leet -d text";
+    exit;
+  fi
+  #creating an array for _leet_map text and plain text
+  declare -a _leet_map=('4' 'b' 'c' 'd' '3' 'f' '6' 'h' '1' 'j' 'k' 'l' 'm' 'n' '0' 'p' 'q' 'r' '5' '7' 'u' 'v' 'w' 'x' 'y' 'z' '4' 'B' 'C' 'D' '3' 'F' '6' 'H' '1' 'J' 'K' 'L' 'M' 'N' '0' 'P' 'Q' 'R' '5' '7' 'U' 'V' 'W' 'X' 'Y' 'Z' '1' '2' '3' '4' '5' '6' '7' '8' '9' '0' '.' '-' '_' ' ');
+  declare -a  _eng_map=('a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z' '1' '2' '3' '4' '5' '6' '7' '8' '9' '0' '.' '-' '_' ' ');
+
+  local _length="${#_leet_map[*]}"
+
+  for i in $(seq 1 ${#_input})
+    do
+     local _letter=${_input:i-1:1}
+     for j in $(seq 1 ${_length})
+     do
+       local _index=${j}-1
+       if [ "$_opt" == "encrypt" ]; then
+         FIND=${_eng_map[${_index}]};
+       elif [ "$_opt" == "decrypt" ]; then
+         FIND=${_leet_map[${_index}]};
+       fi
+
+       if [ "$_opt" == "encrypt" ]; then
+         if [ "$FIND" == "$_letter" ]; then
+           _encrypted+=${_leet_map[${_index}]};
+         fi
+       elif [ "$_opt" == "decrypt" ]; then
+         if [ "$FIND" == "$_letter" ]; then
+           _encrypted+=${_eng_map[${_index}]};
+         fi
+       fi
+     done
+    done
+
+  if [[ -z "$3" ]]; then
+    printf -- "%s" "${_encrypted}"
+  else
+    eval "$3=${_encrypted// /.}"
+  fi
+}

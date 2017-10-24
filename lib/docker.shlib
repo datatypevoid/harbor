@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# docker.shlib
+
+is_container_running () {
+
+  local _container_name=$1
+
+  if [ ! "$(docker ps -q -f name=${_container_name})" ]; then
+    eval "$2=false"
+  else
+    eval "$2=true"
+  fi
+
+}
+
+is_container_exited () {
+
+  local _container_name=$1
+
+  if [ "$(docker ps -aq -f status=exited -f name=${_container_name})" ]; then
+    eval "$2=true"
+  else
+    eval "$2=false"
+  fi
+
+}
+
+cleanup_container () {
+  local _container_name=$1
+  local _is_container_running=false
+  local _is_container_exited=false
+
+  is_container_running ${_container_name} _is_container_running
+  is_container_exited ${_container_name} _is_container_exited
+
+  if [ "$_is_container_running" = true ]; then
+    # Stop container and clean-up along with volumes.
+    docker stop ${_container_name} && docker rm -v ${_container_name}
+  elif [ "$_is_container_exited" = true ]; then
+    docker rm -v ${_container_name}
+  else
+    printf "WARN: No container (running or stopped) with the name: ${_container_name}\n"
+  fi
+}
+
+delete_volume () {
+  local _volume_name=$1
+  if [ "$(docker volume ls -q -f name=${_volume_name})" ]; then
+    docker volume rm ${_volume_name}
+  else
+    printf "WARN: Tried to delete nonexistant volume: %s\n" ${_volume_name}
+  fi
+}

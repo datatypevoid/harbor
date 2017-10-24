@@ -1,0 +1,39 @@
+usage:
+
+  commands:
+
+    dev-box
+
+      Mounts the specified directory (via the --mount-path option) on
+      the host system to the '/app' directory in the container. Pass
+      the --help option to this command command for more info.
+
+    clone
+
+      Clones the application to a Docker volume. Checks to see if any
+      volumes possess the desired name, and deletes them if so.
+      Requires a Docker volume containing any needed ssh keys if
+      automatic cloning of private repos is desired. Must specify a
+      branch to clone via the --branch option. Pass the --help option
+      to this command for more info.
+
+    build-app
+
+      Builds the application stored on the linked Docker volume.
+      The --build-type option allows the user to specify the target
+      build type. Pass the --help option to this command for more info.
+
+    package
+
+      Packages up the application into a distributable form. Pass the
+      --help option to this command for more info.
+
+    deploy
+
+      Deploys an app mounted to a docker volume. Currently only
+      supports Release builds. Pass the --help option to this
+      command for more info.
+
+  general options:
+
+    --help|-h|-? - Display a usage synopsis.

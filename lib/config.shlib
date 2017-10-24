@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# config.shlib
+
+get_abs_path_to_lib () {
+  pushd . > /dev/null
+  local _path="${BASH_SOURCE[0]}"
+  if ([ -h "${_path}" ]); then
+    while([ -h "${_path}" ]); do cd "$(dirname "$_path")";
+    _path=`readlink "${_path}"`; done
+  fi
+  cd "$(dirname ${_path})" > /dev/null
+  _path=$(pwd);
+  popd > /dev/null
+  eval "$1=${_path}"
+}
+
+clean_path () {
+  local _path=$1
+  # clean path of things like /first/../../second
+  cd "$_path"
+  _path="$PWD"
+  cd - >> /dev/null
+  eval "$2=${_path}"
+}
+
+upsearch () {
+  local _path=$3
+  local _slashes=${_path//[^\/]/}
+  local _directory="${_path}"
+  for (( n=${#_slashes}; n>0; --n ))
+  do
+    clean_path ${_directory} _directory
+    # return if test passes
+    test -e "$_directory/$2" && eval "$1=${_directory}" && return
+    _directory="$_directory/.."
+  done
+  # NOT FOUND
+  eval "$1=__NOT_FOUND__"
+}
+
+config_read_file() {
+  (grep -E "^${2}=" -m 1 "${1}" 2>/dev/null || echo "VAR=__UNDEFINED__") | head -n 1 | cut -d '=' -f 2-;
+}
+
+config_get() {
+  local _name="harbor"
+  local _extension="cfg"
+  local _postfix=".defaults"
+  local _config_path=""
+  local _default_config_path=""
+  local _config_file="${_name}.${_extension}"
+  local _default_config_file="${_name}${_postfix}.${_extension}"
+  local _val=""
+
+  upsearch _config_path ${_config_file} "$(pwd)"
+  upsearch _default_config_path "${_default_config_file}" "$(pwd)"
+
+  if [[ "${_default_config_path}" = "__NOT_FOUND__" ]]; then
+    local _search_path=""
+    get_abs_path_to_lib _search_path
+    upsearch _default_config_path "${_default_config_file}" "${_search_path}"
+  fi
+
+  # append filename to path
+  _config_path="${_config_path}/${_config_file}"
+  _default_config_path="${_default_config_path}/${_default_config_file}"
+
+  _val="$(config_read_file "${_config_path}" "${2}")";
+
+  if [ "${_val}" = "__UNDEFINED__" ]; then
+    _val="$(config_read_file "${_default_config_path}" "${2}")";
+  fi
+
+  if [[ ! $1 = *[!\ ]* ]]; then
+    printf -- "%s" "${_val}";
+  else
+    eval "$1=${_val}"
+  fi
+}

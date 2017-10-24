@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+# script/build-app.sh
+
+# Use the Bash built-in conditional unset substitution syntax.
+log () {
+  declare LOG_INPUT=${*:-$(</dev/stdin)}
+  local _message_verbosity=""
+  local _current_verbosity=""
+  local _message=""
+  local _formatter=""
+
+  get_arg () {
+    local _arg_index=${1:?}
+    local _field_delimiter=${2:?}
+    local LOG_INPUT=${3:?}
+    echo ${LOG_INPUT} | cut -d "${_field_delimiter}" -f ${_arg_index}
+  }
+
+  trim_to_field_index () {
+    local _index=${1:?}
+    local _field_delimiter=${2:?}
+    local _input_string=${3:?}
+    echo "${_input_string}" | cut -d "${_field_delimiter}" -f${_index}-
+  }
+
+  function join_by {
+    local d=$1;
+    shift;
+    echo -n "$1";
+    shift;
+    printf "%s" "${@/#/$d}";
+  }
+
+  _message_verbosity="$(get_arg 1 " " "${LOG_INPUT}")"
+  _current_verbosity="$(get_arg 2 " " "${LOG_INPUT}")"
+  _formatter="$(get_arg 2 '"' "${LOG_INPUT}")"
+  # printf -- "LOG_INPUT: %s\n" "${LOG_INPUT}"
+  # printf -- "_message_verbosity: %s\n" "${_message_verbosity}"
+  # printf -- "_current_verbosity: %s\n" "${_current_verbosity}"
+  # printf -- "_formatter: %s\n" "${_formatter}"
+
+  LOG_INPUT="$(trim_to_field_index 3 '"' "${LOG_INPUT}")"
+  _message="$(join_by ' ' ${LOG_INPUT})"
+  # printf -- "_message: \n"
+  # printf -- "${_formatter}" "${_message}"
+
+  if [[ ${_message_verbosity} -le ${_current_verbosity} ]]; then
+    printf -- "${_formatter}" "${_message}"
+  fi
+
+}

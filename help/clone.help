@@ -1,0 +1,1 @@
+usage: harbor clone [--app-source <docker-volume>][--app-target <container/path/to/mount/vol>][--branch|-b <remote-branch>][--container-name|-n <docker-container>][--ssh-source <docker-volume>][--ssh-target <container/path/to/mount/vol>][--help|-h|-?]

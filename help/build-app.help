@@ -1,0 +1,1 @@
+usage: harbor build-app [--build-type <Debug|Release>][--container-name|-n <docker-container>][--mount-source|-s <path\to\host\dir>][--mount-target|-t <container\path\to\mount\volume>][--help|-h|-?]
